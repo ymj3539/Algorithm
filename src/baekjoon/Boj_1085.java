@@ -2,9 +2,6 @@ package baekjoon;
 
 import java.util.Scanner;
 
-// commit test
-
-
 public class Boj_1085 {
 	static int d =0;
 	static int min = Integer.MAX_VALUE;

@@ -18,10 +18,9 @@ public class Main {
 		for(int i=0; i<L; i++) {
 			arr[i] = str.charAt(i)-'a'+1;
 			
-			tmp += arr[i] * (Math.pow(31, i));
+			tmp += ( (arr[i]%1234567891) * (Math.pow(31, i)) % 1234567891 );
 		}
 		
-		tmp %= 1234567891;
 		
 		// System.out.println(Arrays.toString(arr));
 		System.out.println(tmp);

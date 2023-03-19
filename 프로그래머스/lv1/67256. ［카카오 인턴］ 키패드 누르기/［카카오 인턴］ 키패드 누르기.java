@@ -34,6 +34,7 @@ class Solution {
                 // 왼손 위치 갱신
                 lefthand = keypad[numbers[i]];
             }
+            
             // 오른쪽 번호일 때
             else if(numbers[i] == 3 || numbers[i] == 6 || numbers[i] == 9){
                 // 문자열에 R추가
@@ -41,25 +42,31 @@ class Solution {
                 // 오른손 위치 갱신
                 righthand = keypad[numbers[i]];
             }
+            
             // 중앙 번호일 때
             else{
                 // 왼손과의 위치 비교
                 int dl = Math.abs(lefthand[0] - keypad[numbers[i]][0]) + Math.abs(lefthand[1] - keypad[numbers[i]][1]);
                 // 오른손과의 위치 비교
                 int dr = Math.abs(righthand[0] - keypad[numbers[i]][0]) + Math.abs(righthand[1] - keypad[numbers[i]][1]);
+                
                 // 왼손 오른손 비교
-                // 왼손이 더 가까우면
+                // 1. 왼손이 더 가까우면
                 if(dl < dr){
                     // 문자열에 L추가
                     sb.append("L");
                     // 왼손 위치 갱신
                     lefthand = keypad[numbers[i]];
-                }else if(dr < dl){
+                }
+                // 2. 오른손이 더 가까우면 
+                else if(dr < dl){
                     // 문자열에 R추가
                     sb.append("R");
                     // 오른손 위치 갱신
                     righthand = keypad[numbers[i]];
-                }else{
+                }
+                // 3. 같으면
+                else{
                     if(hand.equals("right")){
                         // 문자열에 R추가
                         sb.append("R");

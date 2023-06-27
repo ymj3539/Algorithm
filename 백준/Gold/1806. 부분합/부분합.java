@@ -1,51 +1,56 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.LinkedList;
-import java.util.PriorityQueue;
-import java.util.Queue;
-import java.util.StringTokenizer;
+import java.util.*;
+import java.io.*;
 
 public class Main {
-    static BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
-    static StringTokenizer tokens;
-    static int N, S;
-    static int[] arr;
-    public static void main(String[] args) throws IOException {
-        tokens = new StringTokenizer(input.readLine());
-        N = Integer.parseInt(tokens.nextToken());
-        S = Integer.parseInt(tokens.nextToken());
+	static BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
+	static StringTokenizer tokens;
+	static int N, S;
+	static int[] arr;
+	static int min = Integer.MAX_VALUE;
+	public static void main(String[] args) throws Exception{
+		tokens = new StringTokenizer(input.readLine());
+		N = Integer.parseInt(tokens.nextToken());
+		S = Integer.parseInt(tokens.nextToken());
+		
+		arr = new int[N];
+		tokens = new StringTokenizer(input.readLine());
+		
+		int size = arr.length;
+		for(int i=0; i<size; i++) {
+			arr[i] = Integer.parseInt(tokens.nextToken());
+		}
+		
+//		System.out.println(Arrays.toString(arr));
+		
+		int sum = 0;	// 총합
+		int cnt = 0;	// 길이
+		int end = 0;	// 맨 끝값 
+		Queue<Integer> queue = new LinkedList<>();
+		
+		for(int i=0; i<size; i++) {
+			// 총합보다 작니?
+			if(sum < S) {
+				// 총합, 길이 더하기
+				sum += arr[i];
+				cnt++;
+				queue.offer(arr[i]);
+				
+			}
+			
+			// 총합 이상이니?
+			while(sum >= S) {
+				// 최소 길이 비
+				min = Math.min(min, cnt);
+				
+				// 뒤에꺼 빼기
+				end = queue.poll();
+				sum -= end;
+				cnt--;
+			}
+			
+		}
+		
+		System.out.println(min == Integer.MAX_VALUE ? 0 : min);
+	}
 
-        arr = new int[N+1];
-        tokens = new StringTokenizer(input.readLine());
-        for(int i=0; i<N; i++){
-            arr[i] = Integer.parseInt(tokens.nextToken());
-        }
-
-        int start = 0;
-        int end = 0;
-        int minLength = Integer.MAX_VALUE;
-        int sum = 0;
-        Queue<Integer> queue = new LinkedList<>();
-
-        while(start <= N){
-            // sum이 S보다 작으면 sum에 arr 원소 하나 추가
-            if(sum < S) {
-                // sum에 추가 후 start 값 하나 증가
-                queue.offer(arr[start]);
-                sum += arr[start++];
-            }
-
-            // sum이 S보다 크면 sum에서 제일 앞의 원소 빼줌
-            else {
-                minLength = Math.min(minLength, queue.size());
-                int tmp = queue.poll();
-                sum -= tmp;
-            }
-        }
-
-
-        System.out.println(minLength == Integer.MAX_VALUE ? 0 : minLength);
-
-    }
 }

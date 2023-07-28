@@ -20,13 +20,11 @@ public class Main {
             int stack_size = stack.size();
             // i번째 문자가 last_char과 같은가?
             // 같고, 스택 size가 exp_size 이상이면 스택에서 하나씩 빼서 확인
-//            System.out.println(i+", "+str.charAt(i)+", "+stack.size()+", "+exp_str_size);
-            if(stack_size >= exp_str_size){
+            if(str.charAt(i) == last_char && stack_size >= exp_str_size){
 
                 // 스택에서 뺀 문자와 폭발 문자열(문자) 비교
                 boolean flag = true;
                 for(int k =exp_str_size-1, j = stack_size-1;  k>=0; k--, j--){
-//                    System.out.println(stack.get(j));
                     if(stack.get(j) != exp_str.charAt(k)){
                         flag = false;
                         break;
@@ -45,20 +43,12 @@ public class Main {
 
         }
 
-
-//        while(!stack.isEmpty()){
-//            ans.insert(0, stack.pop());
-//        }
-
         if(!stack.isEmpty()){
             for(char c : stack){
                 ans.append(c);
             }
         }
 
-
-
         System.out.println(ans.length() == 0 ? "FRULA" : ans.toString());
-
     }
 }

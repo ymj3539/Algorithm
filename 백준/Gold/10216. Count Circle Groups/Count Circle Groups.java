@@ -28,8 +28,7 @@ public class Main {
             }
 
             for(int i=0; i<N; i++){
-                for(int j=0; j<N; j++){
-                    if(i==j) continue;
+                for(int j=i+1; j<N; j++){
                     
                     if(find(i) == find(j)) continue;
 
@@ -44,7 +43,7 @@ public class Main {
             }
 
             Set<Integer> set = new HashSet<>();
-            
+
             for(int i=0; i< N; i++){
                 set.add(find(parents[i]));
             }

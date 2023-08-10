@@ -14,41 +14,31 @@ public class Main {
 
         map = new boolean[N][M];
         ans = 0;
-        nemo(0, 0,0);
+        nemo(0);
 
         System.out.println(ans);
 
     }
 
-    static void nemo(int r, int c, int cnt){
+    static void nemo(int cnt){
         if(cnt == N*M){
-            // 넴모 개수 세기
-            boolean flag = false;
-            for(int i=0; i<=N-2; i++){
-                for(int j=0; j<=M-2; j++){
-                    if(map[i][j] && map[i][j+1] && map[i+1][j] && map[i+1][j+1]){
-                        return;
-
-                    }
-                }
-            }
-
             ans++;
             return;
         }
 
-        int dc = c + 1;
-        int dr = r;
-        if(dc == M) {
-            dc = 0;
-            dr = r+1;
+        int c = cnt%M;
+        int r = cnt/M;
+
+        if(r>=1 && c>=1 && map[r-1][c] && map[r][c-1] && map[r-1][c-1]){
+            nemo(cnt+1);
+        }else{
+            nemo(cnt+1);
+            map[r][c] = true;
+            nemo(cnt+1);
+            map[r][c] = false;
+
         }
 
-
-        map[r][c] = true;
-        nemo(dr, dc, cnt+1);
-        map[r][c] = false;
-        nemo(dr, dc, cnt+1);
 
     }
 }

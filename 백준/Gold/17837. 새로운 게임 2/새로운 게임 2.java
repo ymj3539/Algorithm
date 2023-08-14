@@ -4,11 +4,12 @@ public class Main {
     static BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
     static StringTokenizer tokens;
     static int N, K;
-    static int[][] map;
-    static Piece[] pieces;
-    static Piece[][] Piece_map;
+    static int[][] map; // 색깔 map
+    static Piece[] pieces; // 말 담을 배열
+    static Piece[][] Piece_map; // 현재 좌표에서 가장 바닥에 해당되는 말
     static int[] dy = {0, 0, 0, -1, 1}; // 0 우 좌 상 하
     static int[] dx = {0, 1, -1, 0, 0};
+
     public static void main(String[] args) throws Exception{
         tokens = new StringTokenizer(input.readLine());
         N = Integer.parseInt(tokens.nextToken());
@@ -53,7 +54,7 @@ public class Main {
                 // 범위 확인
                 if(!isIn(dr, dc)){
                     // 파란색처럼 작동
-                    if(!blue(i, dr, dc)) break outer;
+                    if(!blue(i)) break outer;
                 }else {
                     // 흰색(1)일 때
                     if(map[dr][dc] == 0){
@@ -68,12 +69,10 @@ public class Main {
                     }
                     // 파랑(2)일 때
                     else if(map[dr][dc] == 2){
-                        if(!blue(i, dr, dc)) break outer;
+                        if(!blue(i)) break outer;
                     }
 
                 }
-
-
             }
             turn++;
         }
@@ -84,14 +83,13 @@ public class Main {
     static boolean white(int i, int dr, int dc){
         Piece cur = pieces[i];
 
-
         // cur의 bottom이 있으면 연결 끊어주기
         if(cur.bottom != null){
             cur.bottom.top = null;
             cur.bottom = null;
         }
 
-
+        // 현재 말이 제일 밑바닥이면 비우고 이동
         if(Piece_map[cur.r][cur.c] == cur){
             Piece_map[cur.r][cur.c] = null;
         }
@@ -114,14 +112,16 @@ public class Main {
         }
         // 말이 없을 때
         else {
+            // 현재 말이 밑바닥
             Piece_map[dr][dc] = cur;
         }
 
+        // 쌓인 말 갯수 체크
         if(canGo(dr, dc)){
             return true;
         }
+        
         else return false;
-
     }
 
     static boolean red(int i, int dr, int dc){
@@ -129,26 +129,32 @@ public class Main {
 
         // 순서 바꾸기
         Piece cur = pieces[i];
-        if(cur.top != null){
 
+        // 현재 말 위에 순서바꿔줘야 될게 있을 때
+        if(cur.top != null){
             Stack<Piece> stack = new Stack<>();
 
-            Piece tmp = cur.bottom; // 현재 말 아래에 있는 말
+            Piece tmp = cur.bottom; // 현재 말 아래에 있는 말 따로 저장
+
+            // 현재 말 위에 있는 말들 stack에 넣어주기
             while(cur != null){
                 stack.push(cur);
                 cur = cur.top;
             }
 
             Piece now = stack.pop();
-
-
+            
             if(tmp != null){
+                // 아까 따로 저장했던 말과 연결
                 tmp.top = now;
             }else {
+                // 밑에 다른 말 없으면 얘가 밑바닥
                 Piece_map[dr][dc] = now;
             }
+            
             now.bottom = tmp;
 
+            // stack에서 하나씩 뽑으면서 순서 반대로 연결
             while(!stack.isEmpty()){
                 Piece next = stack.pop();
                 now.top = next;
@@ -156,14 +162,13 @@ public class Main {
                 now = next;
             }
 
+            // 맨 위의 말의 top은 null
             now.top = null;
         }
-
-
          return true;
     }
 
-    static boolean blue(int i, int dr, int dc){
+    static boolean blue(int i){
         Piece cur = pieces[i];
         // 이동 방향 반대로
         cur.changeDir();
@@ -172,6 +177,7 @@ public class Main {
         int br = cur.r + dy[cur.dir];
         int bc = cur.c + dx[cur.dir];
 
+        // 이동하려는 칸이 범위 밖이나 blue면 이동X
         if(!isIn(br, bc) || map[br][bc] == 2){
             return true;
         }else if(map[br][bc] == 0){
@@ -184,17 +190,17 @@ public class Main {
     }
 
 
+    // 쌓인 말이 4개 미만인지 체크
     static boolean canGo(int r, int c){
         int cnt = 0;
         Piece cur = Piece_map[r][c];
-        while(cur != null){
+
+        while(cur != null && cnt < 4){
             cnt++;
-//            System.out.println(cur.toString() +", "+cnt);
             cur = cur.top;
         }
-        if(cnt >= 4){
-            return false;
-        }
+
+        if(cnt >= 4) return false; // 4개 미만이면 종료
         return true;
     }
 
@@ -202,7 +208,9 @@ public class Main {
         return (r>=1 && c>=1 && r<=N && c<=N);
     }
 
+    // 말 객체
     static class Piece{
+        // 좌표, 방향, 말 번호
         int r, c, dir, num;
         Piece bottom, top;
 
@@ -215,6 +223,7 @@ public class Main {
             this.num = num;
         }
 
+        // 말 좌표 이동 시키기
         public void move(int dr, int dc){
             this.r = dr;
             this.c = dc;
@@ -229,6 +238,7 @@ public class Main {
             }
         }
 
+        // 말 방향 전환
         public void changeDir(){
             if(this.dir == 1){
                 this.dir = 2;
@@ -241,12 +251,5 @@ public class Main {
             }
         }
 
-        @Override
-        public String toString(){
-            return ("{ r: "+this.r+", c: "+this.c+", dir: "+dir+", num: "+num+" }");
-        }
-
     }
-
-
 }

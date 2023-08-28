@@ -6,7 +6,8 @@ public class Main {
     static int N, K, R; // N : 목초지 크기, K : 소 마리수, R : 길 갯수
     static int[][] map;
     static Point[] cows;
-    static boolean[][][][] roads;
+//    static boolean[][][][] roads;
+    static List<Point>[][] roads;
     static int[] dy = {0, 0, 1, -1};
     static int[] dx = {1, -1, 0, 0};
 
@@ -17,7 +18,12 @@ public class Main {
         R = Integer.parseInt(tokens.nextToken());
 
         map = new int[N+1][N+1];
-        roads = new boolean[N+1][N+1][N+1][N+1];
+        roads = new List[N+1][N+1];
+        for(int r=1; r<=N; r++){
+            for(int c=1; c<=N; c++){
+                roads[r][c] = new ArrayList<>();
+            }
+        }
         cows = new Point[K];
 
         for(int i=0; i<R; i++){
@@ -27,8 +33,8 @@ public class Main {
             int r2 = Integer.parseInt(tokens.nextToken());
             int c2 = Integer.parseInt(tokens.nextToken());
 
-            roads[r1][c1][r2][c2] = true;
-            roads[r2][c2][r1][c1] = true;
+            roads[r1][c1].add(new Point(r2, c2));
+            roads[r2][c2].add(new Point(r1, c1));
         }
 
         for(int i=0; i<K; i++){
@@ -57,13 +63,16 @@ public class Main {
         while(!queue.isEmpty()){
             Point cur = queue.poll();
 
-            for(int i=0; i<4; i++){
+            outer : for(int i=0; i<4; i++){
                 int dr = cur.r + dy[i];
                 int dc = cur.c + dx[i];
 
                 if(!isIn(dr,dc)) continue;
                 if(visited[dr][dc]) continue;
-                if(roads[cur.r][cur.c][dr][dc]) continue;
+                for(int j=0; j<roads[cur.r][cur.c].size(); j++){
+                    Point road = roads[cur.r][cur.c].get(j);
+                    if(road.r == dr && road.c == dc) continue outer;
+                }
 
                 queue.offer(new Point(dr, dc));
                 visited[dr][dc] = true;

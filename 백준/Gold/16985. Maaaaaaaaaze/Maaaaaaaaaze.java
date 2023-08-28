@@ -3,7 +3,7 @@ import java.util.*;
 public class Main {
     static BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
     static StringTokenizer tokens;
-    static int[][][] maze = new int[5][5][5];
+    static boolean[][][] maze = new boolean[5][5][5];
     static int Min = Integer.MAX_VALUE;
     static int[][] deltas = {
             {0,0,-1},
@@ -18,17 +18,14 @@ public class Main {
             for(int j=0; j<5; j++){
                 tokens = new StringTokenizer(input.readLine());
                 for(int k=0; k<5; k++){
-                    maze[i][j][k] = Integer.parseInt(tokens.nextToken());
+                    if(Integer.parseInt(tokens.nextToken()) == 1){
+                        maze[i][j][k] = true;
+                    }else{
+                        maze[i][j][k] = false;
+                    }
                 }
             }
         }
-
-//        for(int i=0; i<5; i++){
-//            for(int[] j : maze[i]){
-//                System.out.println(Arrays.toString(j));
-//            }
-//        }
-
 
         // 판 쌓기
         perm(0, new int[5], new boolean[5]);
@@ -41,7 +38,7 @@ public class Main {
     static void perm(int nth, int[] choosed, boolean[] visited) {
         if(nth == 5){
             // 순서대로 판 쌓기
-            int[][][] new_maze = new int[5][5][5];
+            boolean[][][] new_maze = new boolean[5][5][5];
             for(int i=0; i<5; i++){
                 new_maze[i] = maze[choosed[i]];
             }
@@ -62,10 +59,10 @@ public class Main {
         }
     }
 
-    static void turn(int nth, int[][][] maze){
+    static void turn(int nth, boolean[][][] maze){
         if(nth == 5){
             // bfs 탐색
-            if(maze[0][0][0] == 0) return;
+            if(!maze[0][0][0]) return;
             int depth = bfs(maze);
             Min = Math.min(depth, Min);
             return;
@@ -73,7 +70,7 @@ public class Main {
 
         // nth번째 판의 방향 정하기
         for(int i=0; i<4; i++){
-            int[][] new_arr = new int[5][5];
+            boolean[][] new_arr = new boolean[5][5];
             for(int r=0; r<5; r++){
                 for(int c=0; c<5; c++){
                     new_arr[c][5-1-r] = maze[nth][r][c];
@@ -87,7 +84,7 @@ public class Main {
 
     }
 
-    static int bfs(int[][][] maze){
+    static int bfs(boolean[][][] maze){
         Queue<Point> queue = new LinkedList();
         boolean[][][] visited = new boolean[5][5][5];
         queue.offer(new Point(0,0,0));
@@ -109,7 +106,7 @@ public class Main {
 
                     if(!isIn(dr, dc, dz)) continue;
                     if(visited[dr][dc][dz]) continue;
-                    if(maze[dr][dc][dz] == 0) continue;
+                    if(!maze[dr][dc][dz]) continue;
 
                     queue.offer(new Point(dr, dc, dz));
                     visited[dr][dc][dz] = true;

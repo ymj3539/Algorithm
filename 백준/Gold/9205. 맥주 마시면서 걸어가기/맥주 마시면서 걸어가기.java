@@ -1,104 +1,71 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
-import java.util.StringTokenizer;
-
+import java.io.*;
+import java.util.*;
 public class Main {
-	static BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
-	static StringTokenizer tokens;
-	static StringBuilder sb;
-	
-	static int T, N;
-	static Point start, end;
-	static List<Point> list;
-	public static void main(String[] args) throws NumberFormatException, IOException {
-		T = Integer.parseInt(input.readLine());
-		
-		for(int t=1; t<=T; t++) {
-			
-			N = Integer.parseInt(input.readLine());
-			tokens = new StringTokenizer(input.readLine());
-			int x = Integer.parseInt(tokens.nextToken());
-			int y = Integer.parseInt(tokens.nextToken());
-			start = new Point(x,y);
-			
-			list = new LinkedList<>();
-			for(int i=0; i<N; i++) {
-				tokens = new StringTokenizer(input.readLine());
-				int a = Integer.parseInt(tokens.nextToken());
-				int b = Integer.parseInt(tokens.nextToken());
-				
-				list.add(new Point(a,b));
-			}
-			
-			tokens = new StringTokenizer(input.readLine());
-			x = Integer.parseInt(tokens.nextToken());
-			y = Integer.parseInt(tokens.nextToken());
-			end = new Point(x,y);
-			
-			boolean ans = bfs();
-			System.out.println(ans? "happy":"sad");
-		}
-		
-	}
-	static boolean bfs() {
-		Queue<Point> queue = new LinkedList<>();
-		boolean[] visited = new boolean[N];
-		queue.offer(start);
-		
-		while(!queue.isEmpty()) {
-			
-			Point cur = queue.poll();
-			// 락페 바로 갈수 있나?
-			if(canGo(cur.x, cur.y, end.x, end.y)) {
-				return true;
-			}
-			
-			// 갈수 없으면 편의점 꺼내
-			for(int i=0; i<list.size(); i++) {
-				Point store = list.get(i);
-				
-				if(visited[i]) continue;
-				
-				// 1000m 이내인 편의점
-				if(canGo(cur.x, cur.y, store.x, store.y)) {
-					queue.offer(store);
-					visited[i] = true;
-				}
-				
-			}
-			
-			
-		}
-		return false;
-	}
-	
-	static boolean canGo(int x1, int y1, int x2, int y2) {
-		int d = Math.abs(x1-x2) + Math.abs(y1-y2);
-		if(d<=1000) return true;
-		
-		else return false;
-		
-	}
-	
-	static class Point{
-		int x, y;
+    static BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
+    static StringTokenizer tokens;
+    static StringBuilder sb = new StringBuilder();
+    static int T, n;
+    static Point Sang;
+    static List<Point> Stores;
+    static Point Rock;
+    public static void main(String[] args)throws Exception{
+        T = Integer.parseInt(input.readLine());
 
-		public Point(int x, int y) {
-			this.x = x;
-			this.y = y;
-		}
+        for(int t =1; t<=T; t++){
+            n = Integer.parseInt(input.readLine());
 
-		@Override
-		public String toString() {
-			return "(" + x + ", " + y + ")";
-		}
-		
-		
-	}
-	
+            tokens = new StringTokenizer(input.readLine());
+            Sang = new Point(Integer.parseInt(tokens.nextToken()),Integer.parseInt(tokens.nextToken()));
+
+            Stores = new ArrayList<>();
+            for(int i=0; i<n; i++){
+                tokens = new StringTokenizer(input.readLine());
+                Stores.add(new Point(Integer.parseInt(tokens.nextToken()),Integer.parseInt(tokens.nextToken())));
+            }
+
+            tokens = new StringTokenizer(input.readLine());
+            Rock = new Point(Integer.parseInt(tokens.nextToken()),Integer.parseInt(tokens.nextToken()));
+
+            boolean canGo = bfs();
+
+            sb.append((canGo ? "happy" : "sad") + "\n");
+        }
+
+        System.out.println(sb);
+        
+    }
+
+    static boolean bfs(){
+        Queue<Point> queue = new LinkedList();
+        queue.offer(Sang);
+        boolean[] visited = new boolean[n];
+
+        while(!queue.isEmpty()){
+            Point cur = queue.poll();
+
+            int dist = Math.abs(cur.x - Rock.x) + Math.abs(cur.y - Rock.y);
+            if(dist <= 1000) return true;
+
+            for(int i=0; i<n; i++){
+                Point store = Stores.get(i);
+
+                if(visited[i]) continue;
+                int dist2 = Math.abs(cur.x - store.x) + Math.abs(cur.y - store.y);
+                if(dist2 <= 1000) {
+                    queue.offer(store);
+                    visited[i] = true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    static class Point{
+        int x, y;
+        public Point(int x, int y){
+            this.x = x;
+            this.y = y;
+        }
+    }
 }

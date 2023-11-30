@@ -32,9 +32,10 @@ public class Main {
 			}
 		}
 		
-		
+		// 좌표 전부 돌면서 각 좌표가 산봉우리가 될 수 있는지 체크
 		for(int r=0; r<N; r++) {
 			for(int c=0; c<M; c++) {
+				// 이미 산봉우리면 패스
 				if(!visited[r][c]) {
 					boolean check = bfs(r, c);
 					if(check) answer++;

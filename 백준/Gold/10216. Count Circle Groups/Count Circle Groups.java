@@ -13,8 +13,10 @@ public class Main {
         for(int t =0; t<T; t++){
             N = Integer.parseInt(input.readLine());
 
+            // 진영 좌표와 R값 담을 배열
             camps = new Camp[N];
 
+            // 진영과 직접 연결된 다른 진영
             parents = new int[N];
 
             for(int i=0; i<N; i++){
@@ -29,12 +31,12 @@ public class Main {
 
             for(int i=0; i<N; i++){
                 for(int j=i+1; j<N; j++){
-                    
+
                     if(find(i) == find(j)) continue;
 
                     // 다르면 진영 범위 체크
                     if(isConnect(camps[i], camps[j])){
-                        // 범위 안에 들어오면 합치기
+                        // 범위 안에 들어오면 같은 그룹으로 합치기
                         union(i, j);
                     }
 
@@ -47,7 +49,7 @@ public class Main {
             for(int i=0; i< N; i++){
                 set.add(find(parents[i]));
             }
-
+            
             sb.append(set.size()+"\n");
 
 
@@ -66,14 +68,14 @@ public class Main {
     static void union(int i, int j){
         int I = find(i);
         int J = find(j);
-        // 대표자의 부모를 바꿔줘야돼
         parents[J] = I;
     }
 
     static boolean isConnect(Camp camp1, Camp camp2){
         // 두 진영 사이의 거리
         int dist = (int)(Math.pow(camp1.x - camp2.x, 2) + Math.pow(camp1.y - camp2.y, 2));
-        int r = (int)Math.pow(camp1.r + camp2.r,2);
+        // 두 반지름의 합
+				int r = (int)Math.pow(camp1.r + camp2.r,2);
         if(dist <= r){
             return true;
         }else return false;

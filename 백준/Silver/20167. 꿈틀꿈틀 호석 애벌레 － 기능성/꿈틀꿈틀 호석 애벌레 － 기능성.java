@@ -24,19 +24,18 @@ public class Main {
     }
 
     static void dfs(int idx, int total, int energy){
-        if(total >= K){
-            energy += (total - K);
-            total = 0;
-        }
-
         if(idx == N) {
             MAX = Math.max(MAX, energy);
             return;
         }
 
+        dfs(idx+1, 0, energy);
 
+        if(total + food[idx] >= K){
+            dfs(idx+1, 0, energy+(total+food[idx]-K));
+        }else {
+            dfs(idx+1, total+food[idx], energy);
+        }
 
-        dfs(idx + 1, total, energy);
-        dfs(idx+1, total += food[idx], energy);
     }
 }

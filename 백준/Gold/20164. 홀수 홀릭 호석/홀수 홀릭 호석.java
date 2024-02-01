@@ -11,23 +11,23 @@ public class Main {
 		N = Integer.parseInt(input.readLine());
 		
 		int num = N;
-		
-		calculate(num, 0);
+		dfs(num, 0);
 		
 		System.out.println(min+" "+max);
 	}
 	
-	static void calculate(int num, int total) {
+	static void dfs(int num, int total_odd_cnt) {
 		// 각 자리 숫자 중 홀수 개수 구하기
 		int odd_cnt = count_odd(num);
-		total += odd_cnt;
+		total_odd_cnt += odd_cnt;
 		
 		
 		// 수가 한자리일때
 		if(num < 10) {
 			// 최소값 최대값 비교
-			max = Math.max(max, total);
-			min = Math.min(min, total);
+			max = Math.max(max, total_odd_cnt);
+			min = Math.min(min, total_odd_cnt);
+			
 			return;
 		} 
 		
@@ -36,46 +36,39 @@ public class Main {
 			int n1 = num / 10;
 			int n2 = num % 10;
 			
-			num = n1 + n2;
-			calculate(num, total);
+			int tmp = n1 + n2;
+			dfs(tmp, total_odd_cnt);
+			
 		} 
 		
 		// 수가 세자리 이상일때 -> 3개의 수로 분할
 		else {
+			int size = String.valueOf(num).length();
 			// 분할
-			comb(0, new int[2], 1, total, num);
+			for(int i=1; i<=size-2; i++) {
+				for(int j=i+1; j<=size-1; j++) {
+					int cut1 = i;
+					int cut2 = j;
+					
+					int n1 =0;
+					int n2 =0; 
+					int n3 = 0;
+					
+					String num_str = String.valueOf(num);
+					n1 = Integer.parseInt(num_str.substring(0, cut1));
+					n2 = Integer.parseInt(num_str.substring(cut1, cut2));
+					n3 = Integer.parseInt(num_str.substring(cut2, num_str.length()));
+					
+					int tmp = n1+n2+n3;
+					
+					dfs(tmp, total_odd_cnt);
+				}
+			}
 		}
 		
-	}
-	
-	static void comb(int nth, int[] choosed, int start_idx, int total, int num) {
-		if(nth == choosed.length) {
-			// 분할된 수 더하기
-			int cut1 = choosed[0];
-			int cut2 = choosed[1];
-			
-			int n1 =0;
-			int n2 =0; 
-			int n3 = 0;
-			
-			String num_str = String.valueOf(num);
-			n1 = Integer.parseInt(num_str.substring(0, cut1));
-			n2 = Integer.parseInt(num_str.substring(cut1, cut2));
-			n3 = Integer.parseInt(num_str.substring(cut2, num_str.length()));
-			
-			int tmp = n1+n2+n3;
-			
-			calculate(tmp, total);
-			return;
-		}
 		
-		int size = String.valueOf(num).length();
-		for(int i=start_idx; i<size; i++) {
-			choosed[nth] = i;
-			comb(nth+1, choosed, i+1, total, num);
-		}
+		
 	}
-	
 	
 	static int count_odd(int num){
 		int cnt = 0;

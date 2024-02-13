@@ -6,33 +6,32 @@ class Solution {
     static boolean Flag;
     static char[] arr = {'A', 'E', 'I', 'O', 'U'};
     static int Cnt;
-    static List<String> list = new ArrayList<>();
+    static int Answer;
     public int solution(String word) {
         int answer = 0;
         Origin_word = word;
         dfs("", 0);
         
-        
-        for(int i=0; i<list.size();  i++){
-            if(list.get(i).equals(word)) {
-                answer = i;
-                break;
-            }
-        }
-        
-       
+       answer = Answer;
         
         return answer;
     }
     
     static void dfs(String word, int depth){
-        list.add(word);
+        if(Flag) return;
+        
+        if(word.equals(Origin_word)){
+            Answer = Cnt;
+            Flag = true;
+            return;
+        }
         
         if(depth == 5){
             return;
         }
         
         for(int i=0; i<5; i++){
+            Cnt++;
             dfs(word+arr[i], depth+1);
         }
     }

@@ -6,7 +6,6 @@ public class Main {
     static StringTokenizer tokens;
     static Node[] Tree;
     static int[] parents;
-    static boolean[] visited;
     static int c;
     static int[] MinArr;
     static int[] MaxArr;
@@ -30,22 +29,8 @@ public class Main {
             if(left != -1) parents[left] = node;
             if(right != -1) parents[right] = node;
 
-            Tree[node] = new Node(left, right, 0, 0);
+            Tree[node] = new Node(left, right);
         }
-
-        // 제일 왼쪽 노드 찾기
-        int cur = 1;
-        int level = 1;
-        while(true){
-            if(Tree[cur].left == -1) break;
-            level++;
-            cur = Tree[cur].left;
-        }
-
-        Tree[cur].r = level;
-        Tree[cur].c = 1;
-
-        visited = new boolean[N+1];
 
         // r : level, c : depth
         c = 0;
@@ -62,9 +47,7 @@ public class Main {
         int maxWidth = Integer.MIN_VALUE;
         int ansLevel = 0;
         for(int i=1; i<=N; i++){
-            int min = MinArr[i];
-            int max = MaxArr[i];
-            int width = max - min + 1;
+            int width = MaxArr[i] - MinArr[i] + 1;
             if(width > maxWidth){
                 ansLevel = i;
                 maxWidth = width;
@@ -77,28 +60,27 @@ public class Main {
 
     static void dfs(int cur, int level) {
         // 왼쪽
-        if(Tree[cur].left != -1 && !visited[Tree[cur].left]) {
+        if(Tree[cur].left != -1) {
             dfs(Tree[cur].left, level+1);
         }
 
+        // 루트
         c++;
         MinArr[level] = Math.min(MinArr[level], c);
         MaxArr[level] = Math.max(MaxArr[level], c);
 
         // 오른쪽
-        if(Tree[cur].right != -1 && !visited[Tree[cur].right]) {
+        if(Tree[cur].right != -1) {
             dfs(Tree[cur].right, level+1);
         }
 
     }
 
     static class Node{
-        int left, right, r, c;
-        public Node(int left, int right, int r, int c){
+        int left, right;
+        public Node(int left, int right){
             this.left = left;
             this.right = right;
-            this.r = r;
-            this.c = c;
         }
     }
 }

@@ -18,17 +18,12 @@ public class Main {
             }
         }
 
-        int[] list = new int[5];
-        dfs(0, list);
+        dfs(0);
 
         System.out.println(max);
     }
 
-    static void dfs(int move_cnt, int[] list){
-//        System.out.println(move_cnt+"-------"+Arrays.toString(list));
-//        for(int i=0; i<N; i++){
-//            System.out.println(Arrays.toString(map[i]));
-//        }
+    static void dfs(int move_cnt){
         if(move_cnt == 5){
             for(int r=0; r<N; r++){
                 for(int c=0; c<N; c++){
@@ -44,12 +39,9 @@ public class Main {
             copy[i] = map[i].clone();
         }
 
-        int tmp = list[move_cnt];
         for(int i=1; i<=4; i++){
-            move(i, move_cnt);
-            list[move_cnt] = i;
-            dfs(move_cnt+1, list);
-            list[move_cnt] = tmp;
+            move(i);
+            dfs(move_cnt+1);
             for(int j=0; j<N; j++){
                 map[j] = copy[j].clone();
             }
@@ -57,7 +49,7 @@ public class Main {
 
     }
 
-    static void move(int dir, int move_cnt){
+    static void move(int dir){
         // dir : 1(오른쪽), 2(왼쪽), 3(위), 4(아래)
         if(dir == 1){
             // 오른쪽 이동
@@ -86,11 +78,6 @@ public class Main {
                         idx--;
 
                     }
-
-//                    if(move_cnt == 0){
-//                        System.out.println(r+" "+c+" "+idx+" =============");
-//                        System.out.println(Arrays.toString(map[r]));
-//                    }
                 }
             }
 
@@ -179,8 +166,6 @@ public class Main {
                 }
             }
         }
-
-
     }
 
 }

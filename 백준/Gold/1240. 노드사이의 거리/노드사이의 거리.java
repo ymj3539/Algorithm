@@ -1,89 +1,73 @@
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.StringTokenizer;
-
+import java.util.*;
+import java.io.*;
 public class Main {
-	static BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
-	static StringTokenizer tokens;
-	static StringBuilder sb = new StringBuilder();
-	static int[][] tree;
-	static int N, M;
-	public static void main(String[] args) throws IOException {
-		
-		tokens = new StringTokenizer(input.readLine());
-		N = Integer.parseInt(tokens.nextToken());
-		M = Integer.parseInt(tokens.nextToken());
-		
-		tree = new int[N+1][N+1];
-		
-		for(int[] i : tree) {
-			Arrays.fill(i, Integer.MAX_VALUE);
-		}
-		
-		
-		
-		for(int i=0; i<N-1; i++) {
-			tokens = new StringTokenizer(input.readLine());
-			int n1 = Integer.parseInt(tokens.nextToken());
-			int n2 = Integer.parseInt(tokens.nextToken());
-			int d = Integer.parseInt(tokens.nextToken());
-			
-			tree[n1][n2] = d;
-			tree[n2][n1] = d;
-			
-		}
-		
-		for(int i=0; i<M; i++) {
-			tokens = new StringTokenizer(input.readLine());
-			int n1 = Integer.parseInt(tokens.nextToken());
-			int n2 = Integer.parseInt(tokens.nextToken());
-			int d = bfs(n1, n2);
-			sb.append(d+"\n");
-		}
-		
-		System.out.println(sb);
-		
-	}
-	
-	static int bfs(int n1, int n2) {
-		Queue<Node> queue = new LinkedList<>();
-		boolean[] visited = new boolean[N+1];
-		int sum = 0;
-		
-		queue.offer(new Node(n1, 0));
-		visited[n1] = true;
-		
-		while(!queue.isEmpty()) {
-			Node cur = queue.poll();
-			if(cur.n1 == n2) return cur.d;
-			
-			
-			for(int i=1; i<N+1; i++) {
-				if(tree[cur.n1][i] == Integer.MAX_VALUE) continue;
-				if(visited[i]) continue;
-				queue.offer(new Node(i, cur.d + tree[cur.n1][i]));
-				visited[i] = true;
-				
-			}
-		}
-		return -1;
-	}
-	
-	static class Node{
-		int n1, d;
+    static BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
+    static StringTokenizer tokens;
+    static int N, M;
+    static List<Node>[] list;
+    static int total_dist;
+    static boolean flag = false;
+    public static void main(String[] args) throws Exception{
+        tokens = new StringTokenizer(input.readLine());
+        N = Integer.parseInt(tokens.nextToken());
+        M = Integer.parseInt(tokens.nextToken());
 
-		public Node(int n1, int d) {
-			super();
-			this.n1 = n1;
-			this.d = d;
-		}
-		
-		
-	}
+        list = new List[N+1];
+        for(int i=1; i<=N; i++){
+            list[i] = new ArrayList<>();
+        }
 
+        for(int i=0; i<N-1; i++){
+            tokens = new StringTokenizer(input.readLine());
+            int start = Integer.parseInt(tokens.nextToken());
+            int end = Integer.parseInt(tokens.nextToken());
+            int dist = Integer.parseInt(tokens.nextToken());
+
+            list[start].add(new Node(end, dist));
+            list[end].add(new Node(start, dist));
+        }
+
+        // 거리 구하기
+        StringBuilder sb = new StringBuilder();
+        for(int i=0; i<M; i++){
+            tokens = new StringTokenizer(input.readLine());
+            int start = Integer.parseInt(tokens.nextToken());
+            int end = Integer.parseInt(tokens.nextToken());
+
+            boolean[] visited = new boolean[N+1];
+            visited[start] = true;
+            total_dist = 0;
+            flag = false;
+            dfs(start, end, 0, visited);
+            sb.append(total_dist+"\n");
+        }
+
+        System.out.println(sb);
+    }
+
+    static void dfs(int start, int end, int sum, boolean[] visited){
+        if(flag) return;
+        if(start == end){
+            total_dist = sum;
+            flag = true;
+            return;
+        }
+
+        for(int i=0; i<list[start].size(); i++){
+            Node node = list[start].get(i);
+            if(visited[node.end]) continue;
+            visited[node.end] = true;
+            dfs(node.end, end, sum + node.dist, visited);
+            visited[node.end] = false;
+        }
+
+    }
+
+    static class Node{
+        int end, dist;
+        public Node(int end, int dist){
+            this.end = end;
+            this.dist = dist;
+        }
+    }
 }

@@ -1,147 +1,120 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.Arrays;
-import java.util.StringTokenizer;
-
+import java.util.*;
+import java.io.*;
 public class Main {
-	static BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
-	static StringTokenizer tokens;
-	static StringBuilder sb = new StringBuilder();
-	static int N, M, x, y, K;
-	static int[][] map;
-	static int[] dx = {0, 0, 0, -1, 1};
-	static int[] dy = {0, 1, -1, 0, 0};
-	static int[] move;
-	static Dice dice;
- 	public static void main(String[] args) throws IOException {
-		tokens = new StringTokenizer(input.readLine());
-		N = Integer.parseInt(tokens.nextToken());
-		M = Integer.parseInt(tokens.nextToken());
-		x = Integer.parseInt(tokens.nextToken());
-		y = Integer.parseInt(tokens.nextToken());
-		K = Integer.parseInt(tokens.nextToken());
-		
-		map = new int[N][M];
-		move = new int[K];
-		dice = new Dice(x, y, 0, 0, 0, 0, 0, 0);
-		
-		for(int r=0; r<N; r++) {
-			tokens = new StringTokenizer(input.readLine());
-			for(int c=0; c<M; c++) {
-				map[r][c] = Integer.parseInt(tokens.nextToken());
-			}
-		}
-		
-		tokens = new StringTokenizer(input.readLine());
-		for(int i=0; i<K; i++) {
-			move[i] = Integer.parseInt(tokens.nextToken());
-		}
-		/////// 입력 끝
-		
-		// 이동명령 돌아
-		for(int i=0; i<move.length; i++) {
-			int dir = move[i];
-			// 주사위 좌표 갱신
-			int ddx = dice.x + dx[dir];
-			int ddy = dice.y + dy[dir];
-			
-			if(!isIn(ddx, ddy)) continue;
-			dice.x = ddx;
-			dice.y = ddy;
-			
-			// 주사위 굴려(위치값 변경)
-			if(dir == 1) {
-				dice.moveE();
-			}else if(dir == 2) {
-				dice.moveW();
-			}else if(dir == 3) {
-				dice.moveN();
-			}else if(dir == 4) {
-				dice.moveS();
-			}
-			
-			// 윗면 값 출력
-			sb.append(dice.up+"\n");
-			
-			// 바닥값 비교, 갱신
-			if(map[dice.x][dice.y] == 0) {
-				map[dice.x][dice.y] = dice.down;
-			}else {
-				dice.down = map[dice.x][dice.y];
-				map[dice.x][dice.y] = 0;
-			}
-			
-		}
-		
-		System.out.println(sb);
-		
-	}
+    static BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
+    static StringTokenizer tokens;
+    static int N, M, K;
+    static int[][] map;
 
- 	
- 	
-	static class Dice{
- 		int x, y;
- 		int up, down, dirE, dirW, dirN, dirS;
- 		
-		public Dice(int x, int y, int up, int down, int dirE, int dirW, int dirN, int dirS) {
-			this.x = x;
-			this.y = y;
-			this.up = up;
-			this.down = down;
-			this.dirE = dirE;
-			this.dirW = dirW;
-			this.dirN = dirN;
-			this.dirS = dirS;
-		}
-		
-		@Override
-		public String toString() {
-			return "Dice [x=" + x + ", y=" + y + ", up=" + up + ", down=" + down + ", dirE=" + dirE + ", dirW=" + dirW
-					+ ", dirN=" + dirN + ", dirS=" + dirS + "]";
-		}
- 		
- 		
- 		
- 		// 1. 동쪽 이동 메소드
- 		public void moveE() {
- 			int tmp = this.dirE;
- 			this.dirE = this.up;
- 			this.up = this.dirW;
- 			this.dirW = this.down;
- 			this.down = tmp;
- 			
- 		}
- 		
- 		// 2. 서쪽 이동 메소드
- 		public void moveW() {
- 			int tmp = this.dirE;
- 			this.dirE = this.down;
- 			this.down = this.dirW;
- 			this.dirW = this.up;
- 			this.up = tmp;
- 		}
+    static int[] dy = {0, 0, 0, -1, 1}; // 우 좌 위 아래
+    static int[] dx = {0, 1, -1, 0, 0};
+    static StringBuilder sb = new StringBuilder();
 
- 		// 3. 북쪽 이동 메소드
- 		public void moveN() {
- 			int tmp = this.up;
- 			this.up = this.dirS;
- 			this.dirS = this.down;
- 			this.down = this.dirN;
- 			this.dirN = tmp;
- 		}
- 		
- 		// 4. 남쪽 이동 메소드
- 		public void moveS() {
- 			int tmp = this.up;
- 			this.up = this.dirN;
- 			this.dirN = this.down;
- 			this.down = this.dirS;
- 			this.dirS = tmp;
- 		}
- 	}
- 	
- 	static boolean isIn(int r, int c) {
- 		return (r>=0 && c>=0 && r<N && c<M);
- 	}
+    public static void main(String[] args) throws Exception{
+        tokens = new StringTokenizer(input.readLine());
+        N = Integer.parseInt(tokens.nextToken());
+        M = Integer.parseInt(tokens.nextToken());
+        int x = Integer.parseInt(tokens.nextToken());
+        int y = Integer.parseInt(tokens.nextToken());
+        K = Integer.parseInt(tokens.nextToken());
+
+        Dice dice = new Dice(0, 0, 0, 0, 0, 0, x, y);
+
+        map = new int[N][M];
+        for(int r=0; r<N; r++){
+            tokens = new StringTokenizer(input.readLine());
+            for(int c=0; c<M; c++){
+                map[r][c] = Integer.parseInt(tokens.nextToken());
+            }
+        }
+
+        tokens = new StringTokenizer(input.readLine());
+        for(int i=0; i<K; i++){
+            int dir = Integer.parseInt(tokens.nextToken());
+            int dr = dice.r + dy[dir];
+            int dc = dice.c + dx[dir];
+            if(!isIn(dr, dc)) continue;
+
+            if(dir == 1) dice.goEast();
+            else if(dir == 2) dice.goWest();
+            else if(dir == 3) dice.goNorth();
+            else dice.goSouth();
+
+            // 상단 숫자 출력
+            sb.append(dice.up+"\n");
+
+            // 바닥면 복사
+            if(map[dice.r][dice.c] == 0) {
+                // 칸 <- 바닥면
+                map[dice.r][dice.c] = dice.down;
+            }else{
+                // 바닥면 <- 칸
+                dice.down = map[dice.r][dice.c];
+                // 칸은 0으로 초기화
+                map[dice.r][dice.c] = 0;
+            }
+        }
+        System.out.println(sb);
+    }
+
+    static boolean isIn(int r, int c){
+        return r>=0 && r<N && c>=0 && c<M;
+    }
+
+    static class Dice{
+        int up, down, front, back, left, right;
+        int r, c;
+
+        public Dice(int up, int down, int front, int back, int left, int right, int r, int c){
+            this.up = up;
+            this.down = down;
+            this.front = front;
+            this.back = back;
+            this.left = left;
+            this.right = right;
+            this.r = r;
+            this.c = c;
+        }
+
+        public void goEast(){
+            int up_tmp = this.up;
+            this.up = this.left;
+            this.left = this.down;
+            this.down = this.right;
+            this.right = up_tmp;
+            this.r = this.r + dy[1];
+            this.c = this.c + dx[1];
+        }
+
+        public void goSouth(){
+            int up_tmp = this.up;
+            this.up = this.back;
+            this.back = this.down;
+            this.down = this.front;
+            this.front = up_tmp;
+            this.r = this.r + dy[4];
+            this.c = this.c + dx[4];
+        }
+
+        public void goWest(){
+            int up_tmp = this.up;
+            this.up = this.right;
+            this.right = this.down;
+            this.down = this.left;
+            this.left = up_tmp;
+            this.r = this.r + dy[2];
+            this.c = this.c + dx[2];
+        }
+
+        public void goNorth(){
+            int up_tmp = this.up;
+            this.up = this.front;
+            this.front = this.down;
+            this.down = this.back;
+            this.back = up_tmp;
+            this.r = this.r + dy[3];
+            this.c = this.c + dx[3];
+        }
+
+    }
 }

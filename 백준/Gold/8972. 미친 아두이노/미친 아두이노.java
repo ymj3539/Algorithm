@@ -6,12 +6,12 @@ public class Main {
     static int[] dy = {0, 1, 1, 1, 0, 0, 0, -1, -1, -1};
     static int[] dx = {0, -1, 0, 1, -1, 0, 1, -1, 0, 1};
     static int R, C;
-    static char[][] map;
-    static Point Jongsu;
-    static List<Point> Arduinos = new ArrayList<>();
-    static Set<Point> Bomb = new HashSet();
-    static char[][] copymap;
-    static int[][] checkmap;
+    static char[][] map; // 기본맵
+    static Point Jongsu; // 종수의 아두이노 객체
+    static List<Point> Arduinos = new ArrayList<>(); // 아두이노를 담을 list
+    static Set<Point> Bomb = new HashSet(); // 제거할 아두이노
+    static char[][] copymap; // 아두이노 이동 후 맵
+    static int[][] checkmap; // 이동 후 아두이노의 인덱스를 담기 위한 맵
     public static void main (String[] args) throws Exception{
         tokens = new StringTokenizer(input.readLine());
         R = Integer.parseInt(tokens.nextToken());
@@ -37,9 +37,6 @@ public class Main {
         outer : for(int i=0; i<str.length(); i++){
             int dir = str.charAt(i) - '0';
 
-//            StringBuilder sb = new StringBuilder();
-//            sb.append("movecnt: "+(int)(i+1)+"\n");
-
             // 1. 종수 이동
             Jongsu.r += dy[dir];
             Jongsu.c += dx[dir];
@@ -51,19 +48,22 @@ public class Main {
             }
 
             // 3. 미친 아두이노 이동
+            // 초기화
             copymap = new char[R][C];
             checkmap = new int[R][C];
             Bomb = new HashSet();
+            
+            // copymay 채우기
             for(int j=0; j<copymap.length; j++){
                 Arrays.fill(copymap[j], '.');
             }
 
+            // 아두이노 진짜루 이동
             for(int j=0; j<Arduinos.size(); j++){
                 moveArduino(j);
 
                 // 4. 종수랑 겹치는지 확인
                 if(Jongsu.r == Arduinos.get(j).r && Jongsu.c == Arduinos.get(j).c){
-//                    System.out.println(Jongsu.r+" "+Jongsu.c+"  "+Arduinos.get(j).r+" "+Arduinos.get(j).c);
                     moveCnt = i+1;
                     break outer;
                 }
@@ -73,12 +73,12 @@ public class Main {
             for(int j=0; j<Arduinos.size(); j++){
                 Point ard = Arduinos.get(j);
                 if(copymap[ard.r][ard.c] == 'R'){
-                    Bomb.add(Arduinos.get(checkmap[ard.r][ard.c]));
-                    Bomb.add(Arduinos.get(j));
+                    Bomb.add(Arduinos.get(checkmap[ard.r][ard.c])); // 이미 존재하던 아두이노를 Bomb에 담음
+                    Bomb.add(Arduinos.get(j)); // 현재 아두이노도 Bomb에 담음
                 }
                 else {
                     copymap[ard.r][ard.c] = 'R';
-                    checkmap[ard.r][ard.c] = j;
+                    checkmap[ard.r][ard.c] = j; // 아두이노 index 저장
                 }
             }
 
@@ -93,20 +93,7 @@ public class Main {
             for(int r=0; r<R; r++){
                 map[r] = copymap[r].clone();
             }
-
-//            // 맵 출력
-//
-////            map[Jongsu.r][Jongsu.c] = 'I';
-//            for(int r=0; r<R; r++){
-//                for(int c=0; c<C; c++) {
-//                    sb.append(map[r][c]);
-//                }
-//                sb.append("\n");
-//            }
-//            System.out.println(sb);
-//            map[Jongsu.r][Jongsu.c] = '.';
-
-
+            
         }
 
         if(moveCnt == -1){
@@ -136,9 +123,7 @@ public class Main {
             if(i==5) continue;
             int dr = ard.r + dy[i];
             int dc = ard.c + dx[i];
-
-
-
+            
             // 거리 계산
             int dist = Math.abs(Jongsu.r - dr) + Math.abs(Jongsu.c - dc);
             if(min_dist > dist){
@@ -154,17 +139,10 @@ public class Main {
     }
 
     static class Point{
-        int r, c, idx;
+        int r, c;
         public Point(int r, int c){
             this.r = r;
             this.c = c;
         }
-
-        public Point(int r, int c, int idx){
-            this.r = r;
-            this.c = c;
-        }
-
-
     }
 }

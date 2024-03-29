@@ -4,67 +4,68 @@ import java.io.*;
 public class Main {
     static BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
     static StringTokenizer tokens;
-    static int N, M;
-    static char[][] map;
-    static int K;
+    static int M, N, K;
+    static int[][] Jmap;
+    static int[][] Omap;
+    static int[][] Imap;
     static StringBuilder sb = new StringBuilder();
     public static void main(String[] args) throws Exception {
         tokens = new StringTokenizer(input.readLine());
+
         M = Integer.parseInt(tokens.nextToken());
         N = Integer.parseInt(tokens.nextToken());
-
-        map = new char[M][N];
-
-        int[][] jungle = new int[M+1][N+1];
-        int[][] ocean = new int[M+1][N+1];
-        int[][] ice = new int[M+1][N+1];
-
         K = Integer.parseInt(input.readLine());
 
-        for(int r =1; r<=M; r++){
-            map[r-1] = input.readLine().toCharArray();
+        Jmap = new int[M+1][N+1];
+        Omap = new int[M+1][N+1];
+        Imap = new int[M+1][N+1];
+
+        for(int r=1; r<=M; r++){
+            String str = input.readLine();
             for(int c=1; c<=N; c++){
-                if(map[r-1][c-1] == 'J') jungle[r][c] = jungle[r][c-1] + 1;
-                else jungle[r][c] = jungle[r][c-1];
-
-                if(map[r-1][c-1] == 'O') ocean[r][c] = ocean[r][c-1] + 1;
-                else ocean[r][c] = ocean[r][c-1];
-
-                if(map[r-1][c-1] == 'I') ice[r][c] = ice[r][c-1] + 1;
-                else ice[r][c] = ice[r][c-1];
+                char ch = str.charAt(c-1);
+                if(ch=='J') Jmap[r][c] = 1;
+                else if(ch =='O') Omap[r][c] = 1;
+                else Imap[r][c] = 1;
             }
-
-
         }
 
-        for(int c =1; c<=N; c++){
-            for(int r=1; r<=M; r++){
-                jungle[r][c] += jungle[r-1][c];
-                ocean[r][c] += ocean[r-1][c];
-                ice[r][c] += ice[r-1][c];
-
+        // 누적합 구하기 (세로 방향)
+        for(int r=1; r<=M; r++){
+            for(int c=1; c<N; c++){
+                Jmap[r][c+1] += Jmap[r][c];
+                Omap[r][c+1] += Omap[r][c];
+                Imap[r][c+1] += Imap[r][c];
             }
-
         }
 
+        // 누적합 구하기 (가로 방향)
+        for(int c=1; c<=N; c++){
+            for(int r=1; r<M; r++){
+                Jmap[r+1][c] += Jmap[r][c];
+                Omap[r+1][c] += Omap[r][c];
+                Imap[r+1][c] += Imap[r][c];
+            }
+        }
 
-
-        for(int i=0; i<K; i++){
+        for(int k=0; k<K; k++){
             tokens = new StringTokenizer(input.readLine());
             int a = Integer.parseInt(tokens.nextToken());
             int b = Integer.parseInt(tokens.nextToken());
             int c = Integer.parseInt(tokens.nextToken());
             int d = Integer.parseInt(tokens.nextToken());
-            int j_sum = jungle[c][d] - jungle[a-1][d] - jungle[c][b-1] + jungle[a-1][b-1];
-            int o_sum = ocean[c][d] - ocean[a-1][d] - ocean[c][b-1] + ocean[a-1][b-1];
-            int i_sum = ice[c][d] - ice[a-1][d] - ice[c][b-1] + ice[a-1][b-1];
-
-            sb.append(j_sum+" "+o_sum+" "+i_sum+"\n");
-
+            func(a, b, c, d);
         }
 
         System.out.println(sb);
 
     }
+    static void func(int a, int b, int c, int d){
+        // 정글 계산
+        int j = Jmap[c][d] - Jmap[a-1][d] - Jmap[c][b-1] + Jmap[a-1][b-1];
+        int o = Omap[c][d] - Omap[a-1][d] - Omap[c][b-1] + Omap[a-1][b-1];
+        int i = Imap[c][d] - Imap[a-1][d] - Imap[c][b-1] + Imap[a-1][b-1];
 
+        sb.append(j+" "+o+" "+i+"\n");
+    }
 }

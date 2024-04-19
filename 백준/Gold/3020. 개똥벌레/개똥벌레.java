@@ -1,8 +1,5 @@
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.nio.Buffer;
-import java.util.Arrays;
-import java.util.StringTokenizer;
+import java.io.*;
+import java.util.*;
 
 public class Main {
     static BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
@@ -23,15 +20,17 @@ public class Main {
             top[i] = Integer.parseInt(input.readLine());
         }
 
+        // 이진 탐색을 위한 정렬
         Arrays.sort(bottom);
         Arrays.sort(top);
 
         int min = Integer.MAX_VALUE;    // 장애물의 최솟값
         int ans_cnt = 0;    // 구간의 수
 
+        // 각 높이마다 탐색
         for(int r=1; r<=H; r++){
             int tmp_cnt = 0; // 해당 높이에서 파괴할 수 있는 장애물 갯수
-             // 이진 탐색
+            // 이진 탐색
             tmp_cnt += count(top, r);
             tmp_cnt += count(bottom, H+1-r);
 
@@ -51,12 +50,13 @@ public class Main {
     }
 
     static int count(int[] arr, int h){
+        // right : 파괴되는 첫번째 장애물의 index
+        // 이 뒤의 index에 해당되는 종유석(석순)은 다 파괴 가능
         int left = 0;
         int right = N/2;
         int mid;
 
         while(left < right){
-
             mid = (left + right)/2;
             if(arr[mid] >= h){
                 right = mid;
@@ -65,6 +65,8 @@ public class Main {
             }
         }
 
+
+        // 우리는 갯수를 알고 싶으니까 전체 갯수(N/2) - right로 구함
         return N/2 - right;
     }
 }

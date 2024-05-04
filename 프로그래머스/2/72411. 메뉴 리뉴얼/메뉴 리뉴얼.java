@@ -1,69 +1,76 @@
-import java.util.*;
 import java.io.*;
+import java.util.*;
+
 class Solution {
-    static Map<String, Integer> map = new HashMap<>();
+    static String[] Orders;
+    static int[] Course;
+    static Map<String, Integer> map;
     public String[] solution(String[] orders, int[] course) {
         String[] answer = {};
-        List<String> list = new ArrayList<>();
+        List<String> totalList = new ArrayList<>();
+        
+        Orders = orders.clone();
+        Course = course.clone();
         
         
-        for(int j=0; j<course.length; j++){
-            map = new HashMap<>();
-            for(int i=0; i<orders.length; i++){
-                if(course[j] > orders[i].length()) continue;
-                char[] arr = orders[i].toCharArray();
-                Arrays.sort(arr);
-                comb(0, new char[course[j]], arr, 0, course[j]);
+        for(int i=0; i<course.length; i++){
+            map = new TreeMap<>();
+            for(int j=0; j<orders.length; j++){
+                if(orders[j].length() >= course[i]){
+                    comb(0, j, course[i], new char[course[i]], 0);
+                }
             }
             
+            List<String> list = new ArrayList<>();
             int max = Integer.MIN_VALUE;
-                for(String key : map.keySet()){
-                    max = Math.max(max, map.get(key));
-                }        
+            for(String key : map.keySet()){
+                // System.out.println(key+" "+map.get(key));
+                if(map.get(key) < 2) continue;
                 
-                for(String key : map.keySet()){
-                    if(map.get(key) >= 2) {
-                        if(map.get(key) == max){
-                            list.add(key);
-                        }
-                    }
-                }  
+                if(map.get(key) > max){
+                    list = new ArrayList<>();
+                    list.add(key);
+                    max = map.get(key);
+                }else if(map.get(key) == max){
+                    list.add(key);
+                }
+            }
+            
+            for(String menu : list){
+                totalList.add(menu);
+            }
+            
+            Collections.sort(totalList);
+            answer = new String[totalList.size()];
+            for(int l=0; l<answer.length; l++){
+                answer[l] = totalList.get(l);
+            }
         }
         
         
-        
-        Collections.sort(list);
-        answer = new String[list.size()];
-        int i = 0;
-        for(String s : list){
-            answer[i++] = s;
-        }
         
         return answer;
     }
     
-    static void comb(int nth, char[] choosed, char[] course, int idx, int n){
-        if(nth == n){
-            // String으로 바꾸기
-            StringBuilder sb = new StringBuilder();
-            for(int i=0; i<n; i++){
-                sb.append(choosed[i]);
-            }
-            String str = sb.toString();
-            
-            // Map에 넣기<String, Integer>
-            if(map.get(str) != null){
-                map.put(str, map.get(str) + 1);
+    static void comb(int nth, int orderIdx, int menuCnt, char[] choosed, int idx){
+        if(nth == menuCnt){
+            char[] newChoosed = choosed.clone();
+            Arrays.sort(newChoosed);
+            String course = String.valueOf(newChoosed);
+            if(map.containsKey(course)){
+                int cnt = map.get(course);
+                map.put(course, ++cnt);
             }else {
-                map.put(str, 1);
+                map.put(course, 1);
             }
             return;
         }
         
-        
-        for(int i=idx; i<course.length; i++){
-            choosed[nth] = course[i];
-            comb(nth+1, choosed, course, i+1, n);
+        for(int i=idx; i<Orders[orderIdx].length(); i++){
+            choosed[nth] = Orders[orderIdx].charAt(i);
+            comb(nth+1, orderIdx, menuCnt, choosed, i+1);
         }
     }
+    
+    
 }
